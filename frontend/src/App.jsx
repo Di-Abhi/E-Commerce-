@@ -9,7 +9,7 @@ const App = () => {
     <div className='container text-center mx-auto mt-10'>
       <Routes>
         <Route path='/' element={<AppLayout><Home /></AppLayout>} />
-        <Route path='/login' element={<AppLayout><Login /></AppLayout>} />
+        <Route path='/login' element={<Login />}/>
       </Routes>
     </div>
   )

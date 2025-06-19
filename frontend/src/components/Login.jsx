@@ -1,27 +1,103 @@
-import React from 'react'
+import { useState } from 'react';
 
 const Login = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState('');
+
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  }
+
+  const validate = () => {
+    let isValid = true;
+    let newError = {};
+
+    if (formData.email.length === 0) {
+      isValid = false;
+      newError.email = 'Email is required';
+    }
+
+    if (formData.password.length === 0) {
+      isValid = false;
+      newError.password = 'Password is required';
+    }
+    setErrors(newError);
+    return isValid;
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      if (formData.email === 'admin@gmail.com' && formData.password === 'admin123') {
+        setMessage('Login successful!');
+      } else {
+        setMessage('Invalid email or password.');
+      }
+    }
+  };
+
   return (
-    <div>
-      <div className='flex min-h-full flex-col justify-center py-6 px-12'>
-        <h1 className='mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900'>Login Screen</h1>
-        <div className='border-gray-300 border-2 rounded-lg p-4 mt-10 sm:mx-auto sm:w-full sm:max-w-sm justify-center'>
-            <h2>Sign in to continue</h2>
-            <form action="">
-                <div className='flex flex-wrap justify-between mb-4 '>
-                <label htmlFor="username">Username:</label>
-                <input className ='border-2 rounded-lg' type='text'></input>
-                </div>
-                <div className='flex flex-wrap justify-between mb-4 '>
-                <label htmlFor='password'>Password:</label>
-                <input className ='border-2 rounded-lg' type='password'></input><br/>
-                </div>
-                <button type='submit'>Submit</button>
-            </form>
+    <div className="flex items-center justify-center min-h-screen w-full bg-gray-50 overflow-hidden text-gray-800 antialiased">
+      <div className="relative py-3 w-full max-w-sm mx-auto text-center">
+        <span className="text-2xl font-light">Login to your account</span>
+        <div className="mt-4 bg-white shadow-md rounded-lg text-left">
+          <div className="h-2 bg-purple-400 rounded-t-md"></div>
+          <form onSubmit={handleSubmit} className="px-8 py-6">
+            <div>
+              <input
+                type="email"
+                required
+                className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"
+                value={formData.email}
+                name='email'
+                onChange={handleChange}
+                placeholder="Email"
+              />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            </div>
+
+            <div>
+              <input
+                type="password"
+                required
+                className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"
+                value={formData.password}
+                name='password'
+                onChange={handleChange}
+                placeholder="Password"
+              />
+              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            </div>
+
+            <div className='flex justify-between items-baseline'>
+              <button
+                type="submit"
+                className="mt-4 bg-purple-500 text-white py-2 px-6 rounded-md hover:bg-purple-600"
+              >
+                Login
+              </button>
+              <a href="#" className="text-sm hover:underline">Forgot password?</a>
+            </div>
+          </form>
+          {message && (
+            <div className="px-8 pb-4 text-sm text-center text-red-600">
+              {message}
+            </div>
+          )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

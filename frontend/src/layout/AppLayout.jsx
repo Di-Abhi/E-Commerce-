@@ -10,7 +10,10 @@ const AppLayout = ({children}) => {
     <div className='container mx-auto mt-10'>
         <Header/>
     </div>
+
     {children}
+
+    
     {/* footer */}
     <div>
         <div className='container mx-auto mt-10 text-center'>
