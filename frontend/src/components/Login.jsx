@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import axios from 'axios';
 
-const Login = () => {
+const Login = ({updateUserDetails}) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -35,14 +36,29 @@ const Login = () => {
     return isValid;
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      if (formData.email === 'admin@gmail.com' && formData.password === 'admin123') {
-        setMessage('Login successful!');
-      } else {
-        setMessage('Invalid email or password.');
+
+      const body = {
+        username: formData.email,
+        password: formData.password
       }
+
+      const config = {
+        withCredentials: true,
+      }
+
+      try{
+
+        const response = await axios.post('http://localhost:5001/auth/login',body,config);
+
+        updateUserDetails(response.data.userDetails);
+
+      }catch(error){
+        setErrors({message: 'Something went wrong, please try again.'});
+      }
+      
     }
   };
 
@@ -50,6 +66,11 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen w-full bg-gray-50 overflow-hidden text-gray-800 antialiased">
       <div className="relative py-3 w-full max-w-sm mx-auto text-center">
         <span className="text-2xl font-light">Login to your account</span>
+        {errors.message && (
+          <div className="mt-4 text-red-500 text-sm">
+            {errors.message}
+          </div>
+        )}
         <div className="mt-4 bg-white shadow-md rounded-lg text-left">
           <div className="h-2 bg-purple-400 rounded-t-md"></div>
           <form onSubmit={handleSubmit} className="px-8 py-6">

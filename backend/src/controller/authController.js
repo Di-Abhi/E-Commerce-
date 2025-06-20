@@ -5,7 +5,7 @@ const authController = {
     login: (req,res)=>{
         const {username, password} = req.body;
 
-        if(username === 'admin' && password === 'admin'){
+        if(username === 'admin@gmail.com' && password === 'admin'){
             const userDetails ={
                 name: 'Abhishek',
                 email: 'abhi@gmail.com',
