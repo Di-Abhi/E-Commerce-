@@ -9,7 +9,7 @@ const Dashboard = ({ userDetails, onLogout }) => {
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:5001/auth/logout', {}, { withCredentials: true });
-      onLogout(); // Clear userDetails from App
+      onLogout(); 
     } catch (error) {
       console.error('Logout failed:', error);
     }

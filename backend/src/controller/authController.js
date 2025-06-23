@@ -1,15 +1,32 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const secret = 'a401d85c-58c1-46fd-b063-150790d3f36c';
+const Users = require('../model/UserSchema');
 
 const authController = {
-    login: (req,res)=>{
+    login: async (req,res)=>{
+        try{
         const {username, password} = req.body;
 
-        if(username === 'admin@gmail.com' && password === 'admin'){
-            const userDetails ={
-                name: 'Abhishek',
-                email: 'abhi@gmail.com',
-            };
+        const data = await Users.findOne({ email: username });
+        if(!data){
+            return res.status(401).json({
+                message: 'Invalid username or password'
+            });
+        }
+
+        const isMatch = await bcrypt.compare(password, data.password);
+        if(!isMatch){
+            return res.status(401).json({
+                message: 'Invalid username or password'
+            });
+        }
+
+        const userDetails = {
+            id: data._id,
+            email: data.email,
+            name: data.name,
+        } 
             const token = jwt.sign(userDetails, secret, { expiresIn: '1h' });
             res.cookie('jwtToken',token,{
                 httpOnly: true,
@@ -21,9 +38,12 @@ const authController = {
                 message: 'User Authenticated',
                 userDetails: userDetails,
             });
-        } else{
-            res.status(401).json({
-                message: 'Invalid username or password'
+
+
+        } catch (error) {
+            console.error('Login error:', error);
+            res.status(500).json({
+                message: 'Internal server error'
             });
         }
     },
