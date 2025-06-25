@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import Login from './components/Login'
-import Home from './components/Home'
-import { Navigate, Route, Routes } from 'react-router-dom'
-import AppLayout from './layout/AppLayout'
-import Dashboard from './components/Dashboard'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import axios from 'axios';
+
+import Home from './components/Home';
+import AppLayout from './layout/AppLayout';
+import Dashboard from './components/Dashboard';
+import Login from './components/Login/Login';
+import Register from './components/Register/Register';
 
 const App = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -14,7 +16,7 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    setUserDetails(null); 
+    setUserDetails(null);
   };
 
   const isUserLoggedIn = async () => {
@@ -54,6 +56,16 @@ const App = () => {
               <Navigate to="/dashboard" />
             ) : (
               <Login updateUserDetails={updateUserDetails} />
+            )
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            userDetails ? (
+              <Navigate to="/dashboard" />
+            ) : (
+              <Register updateUserDetails={updateUserDetails} />
             )
           }
         />
