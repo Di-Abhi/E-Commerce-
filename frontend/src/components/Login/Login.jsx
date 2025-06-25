@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
 import{ GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google' 
+import { useDispatch } from 'react-redux';
+import {SET_USER} from './redux/user/actions';
 
-const Login = ({ updateUserDetails }) => {
+const Login = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -53,12 +56,15 @@ const Login = ({ updateUserDetails }) => {
 
       try {
         const response = await axios.post('http://localhost:5001/auth/login', body, config);
-        updateUserDetails(response.data.userDetails);
+        dispatch({
+          type: SET_USER,
+          payload: response.data.userDetails
+        })
         setMessage('Login successful!');
         setErrors({});
       } catch (error) {
         setMessage('');
-        setErrors({ message: 'Something went wrong, please try again.' });
+        setErrors({ message: error.response?.data?.message || 'Something went wrong, please try again.' });
       }
     }
   };
@@ -69,7 +75,10 @@ const Login = ({ updateUserDetails }) => {
       },{
         withCredentials:true
       });
-      updateUserDetails(response.data.userDetails);
+      dispatch({
+        type: SET_USER,
+        payload: response.data.userDetails
+      });
     }catch(error){
       setErrors({message: 'Something went wrong while google signin'});
     }

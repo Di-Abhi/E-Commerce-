@@ -9,18 +9,18 @@ const Dashboard = ({ userDetails, onLogout }) => {
   const handleLogout = async () => {
     try {
       await axios.post('http://localhost:5001/auth/logout', {}, { withCredentials: true });
-      onLogout(); 
+      onLogout();
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-screen bg-[#fffde7] flex items-center justify-center">
+      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md border-2 border-yellow-300">
         {/* Avatar and User Info */}
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="w-16 h-16 rounded-full bg-blue-500 text-white flex items-center justify-center text-2xl font-semibold">
+        <div className="flex items-center space-x-4 mb-6">
+          <div className="w-16 h-16 rounded-full bg-yellow-400 text-white flex items-center justify-center text-2xl font-semibold shadow">
             {firstLetter}
           </div>
           <div>
@@ -29,17 +29,18 @@ const Dashboard = ({ userDetails, onLogout }) => {
           </div>
         </div>
 
+        {/* Role Section */}
         {userDetails.role && (
-          <div className="mt-4">
-            <h3 className="text-md font-semibold text-gray-700">Role</h3>
-            <p className="text-gray-600">{userDetails.role}</p>
+          <div className="mt-2">
+            <h3 className="text-md font-semibold text-yellow-800">Role</h3>
+            <p className="text-gray-700">{userDetails.role}</p>
           </div>
         )}
 
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="mt-6 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          className="mt-6 w-full bg-yellow-400 text-black font-semibold px-4 py-2 rounded-lg shadow hover:bg-yellow-500 transition-all duration-200"
         >
           Logout
         </button>
