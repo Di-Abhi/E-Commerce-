@@ -1,28 +1,25 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { SET_USER } from '../../redux/user/actions'; // adjust the path as needed
 import './Register.css';
 
-const Register = ({ updateUserDetails }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: ''
-  });
-
+const Register = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
     let isValid = true;
-    let newError = {};
+    const newError = {};
 
     if (!formData.name.trim()) {
       isValid = false;
@@ -43,26 +40,30 @@ const Register = ({ updateUserDetails }) => {
     return isValid;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    if (!validate()) return;
 
-    if (validate()) {
-      const body = {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-      };
+    try {
+      const response = await axios.post(
+        'http://localhost:5001/auth/register',
+        {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        },
+        { withCredentials: true }
+      );
 
-      try {
-        const response = await axios.post('http://localhost:5001/auth/register', body, {
-          withCredentials: true
-        });
-
-        updateUserDetails(response.data.userDetails);
-        setMessage('Registration successful!');
-        setErrors({});
-      } catch (error) {
-        setMessage('');
+      dispatch({ type: SET_USER, payload: response.data.userDetails });
+      setMessage('Registration successful!');
+      setErrors({});
+      navigate('/'); // Redirect to home after registration
+    } catch (error) {
+      setMessage('');
+      if (error.response?.data?.message) {
+        setErrors({ message: error.response.data.message });
+      } else {
         setErrors({ message: 'Something went wrong, please try again.' });
       }
     }
@@ -105,7 +106,9 @@ const Register = ({ updateUserDetails }) => {
         {errors.message && <p className="error">{errors.message}</p>}
         {message && <p className="success">{message}</p>}
 
-        <p>Already have an account? <a href="/login">Login</a></p>
+        <p>
+          Already have an account? <a href="/login">Login</a>
+        </p>
       </form>
     </div>
   );

@@ -6,6 +6,7 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 
 const authRoute = require('./src/routes/authRoute')
+const linksRoutes = require('./src/routes/linksRoutes')
 
 mongoose.connect(process.env.MONGO_URL).then(() => {
     console.log('Connected to MongoDB');
@@ -23,6 +24,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use('/auth',authRoute)
+app.use('/links',linksRoutes)
 
 const PORT = 5001;
 

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Login.css';
-import{ GoogleOAuthProvider, GoogleLogin} from '@react-oauth/google' 
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useDispatch } from 'react-redux';
-import {SET_USER} from './redux/user/actions';
+import { SET_USER } from '../../redux/user/actions';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -50,16 +50,14 @@ const Login = () => {
         password: formData.password
       };
 
-      const config = {
-        withCredentials: true
-      };
-
       try {
-        const response = await axios.post('http://localhost:5001/auth/login', body, config);
+        const response = await axios.post('http://localhost:5001/auth/login', body, {
+          withCredentials: true
+        });
         dispatch({
           type: SET_USER,
           payload: response.data.userDetails
-        })
+        });
         setMessage('Login successful!');
         setErrors({});
       } catch (error) {
@@ -68,24 +66,25 @@ const Login = () => {
       }
     }
   };
-  const handleGoogleSignin = async (authResponse)=>{
-    try{
-      const response = await axios.post('http://localhost:5001/auth/google-auth',{
-        idToken: authResponse.credential
-      },{
-        withCredentials:true
+
+  const handleGoogleSignin = async (credentialResponse) => {
+    try {
+      const response = await axios.post('http://localhost:5001/auth/google-auth', {
+        idToken: credentialResponse.credential
+      }, {
+        withCredentials: true
       });
       dispatch({
         type: SET_USER,
         payload: response.data.userDetails
       });
-    }catch(error){
-      setErrors({message: 'Something went wrong while google signin'});
+    } catch (error) {
+      setErrors({ message: 'Something went wrong while google signin' });
     }
   };
 
-  const handleGoogleSigninFailure = async  (error)=>{
-    setErrors({message: 'Something went wrong while google signin'});
+  const handleGoogleSigninFailure = () => {
+    setErrors({ message: 'Something went wrong while google signin' });
   };
 
   return (
@@ -117,9 +116,14 @@ const Login = () => {
         {message && <p className="success">{message}</p>}
 
         <h2>OR</h2>
-      <GoogleOAuthProvider clientId = {import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <GoogleLogin onSuccess = {handleGoogleSignin} onError={handleGoogleSigninFailure}/>
-      </GoogleOAuthProvider>
+
+        {/* Google OAuth Login */}
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+          <GoogleLogin
+            onSuccess={handleGoogleSignin}
+            onError={handleGoogleSigninFailure}
+          />
+        </GoogleOAuthProvider>
 
         <p>Don’t have an account? <a href="/register">Register</a></p>
       </form>

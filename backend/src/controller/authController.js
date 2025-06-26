@@ -1,11 +1,18 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const secret = 'a401d85c-58c1-46fd-b063-150790d3f36c';
+const secret = process.env.JWT_SECRET;
 const Users = require('../model/UserSchema');
 const { OAuth2Client } = require('google-auth-library');
+const { validationResult } = require('express-validator');
 
 const authController = {
     login: async (req,res)=>{
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array()
+            });
+        }
         try{
         const {email, password} = req.body;
 
